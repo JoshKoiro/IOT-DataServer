@@ -33,9 +33,9 @@ This will write the following json block to the server:
 
 - [x] Write data to data server (saved in memory)
 - [x] Enter data from shell script 
+- [x] Read and save server data to .csv file
 
 ### Features in the works
 
-- [ ] Save server data to csv file
 - [ ] Save server data to database
 - [ ] create shell script dynamically (createScript.js)

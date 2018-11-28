@@ -16,6 +16,7 @@ var fileLoc = "data.csv"
 var express = require('express');
 var app = express();
 var fs = require('fs');
+var os = require('os');
 var csv = require('fast-csv');
 
 //data to be stored in memory (temporary)
@@ -30,12 +31,12 @@ fs.exists(fileLoc,(exist) => {
                 data.push(csvData)
             })
             .on("end",function(){
-                console.log('Data Successfully Loaded....Listening for Data Entry')
+                console.log('Data from ' + fileLoc + ' successfully loaded....listening for data entry')
             })
     } 
     else {
         
-        console.log ('Creating Data File')
+        console.log ('Creating ' + fileLoc + ' as data file')
         
         //format header row in csv file
         var header = parameters.join(",") + ",timeStamp"
@@ -43,7 +44,7 @@ fs.exists(fileLoc,(exist) => {
         //add header to data file
         fs.appendFile(fileLoc, header, function (err) {
             if (err) throw err;
-                console.log('Header Created....Listening For Data Entry');
+                console.log('Headers created....listening For data entry');
         });
     }
 })
@@ -65,7 +66,7 @@ app.get('/write/' + serverCall, function (req, res) {
     //set currentDate variable to current time
     currentDate = new Date()
     //set timestamp parameter
-    req.params.timeStamp = currentDate.getMonth() + "/" + currentDate.getDate() + "/" + currentDate.getFullYear() + " " + currentDate.getHours() + ":" + currentDate.getMinutes() + ":" + currentDate.getSeconds() 
+    req.params.timeStamp = (currentDate.getMonth() + 1) + "/" + currentDate.getDate() + "/" + currentDate.getFullYear() + " " + currentDate.getHours() + ":" + currentDate.getMinutes() + ":" + currentDate.getSeconds() 
     
     //send confirmation to user
     res.header("Content-Type","text/plain")
@@ -77,7 +78,6 @@ app.get('/write/' + serverCall, function (req, res) {
     //push data to file location
 
     //format csv entry
-    console.log('req.params: ' + req.params["parameterOne"])
     var csvEntry = ""
     var csvEntryFormat = Object.keys(req.params).forEach((e,i) => {
         csvEntry = csvEntry + req.params[e] +  ','
@@ -100,12 +100,14 @@ app.get('/read', function (req, res) {
 //run express server 
 var server = app.listen(3000, function () {
    var host = server.address().address
+   var ipAddress = os.networkInterfaces()[Object.keys(os.networkInterfaces())[0]][1].address
    var port = server.address().port
    if(host = "::"){
        host = "localhost:"
    }
 
-   console.log("data server is listening at ", host + port)
-   console.log("Parameters data server is listening for: ")
+   console.log("data server is listening at: \r\n\r\n", ipAddress +":"+ port)
+   console.log("\r\n\r\nParameters data server is listening for: ")
    parameters.forEach((e) => console.log("-> " + e))
+   console.log('\r\n\r\n')
 })
