@@ -39,3 +39,4 @@ This will write the following json block to the server:
 
 - [ ] Save server data to database
 - [ ] create shell script dynamically (createScript.js)
+- [ ] Integrate socket.io for real-time server-client interaction
