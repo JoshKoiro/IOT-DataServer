@@ -8,7 +8,7 @@ var parameters = [
 ]
 
 //CSV File Name and Location
-var fileLoc = 'data.csv'
+var fileLoc = "data.csv"
 
 //-------------------------------------------------------------------------
 
@@ -16,9 +16,37 @@ var fileLoc = 'data.csv'
 var express = require('express');
 var app = express();
 var fs = require('fs');
+var csv = require('fast-csv');
 
 //data to be stored in memory (temporary)
 var data = []
+
+//Check if data file exists. If so, import. If not, create one.
+fs.exists(fileLoc,(exist) => {
+    if(exist){
+        console.log("Loading Data File")
+            var parser = csv.fromPath(fileLoc,{headers:true})
+            .on("data",function(csvData){
+                data.push(csvData)
+            })
+            .on("end",function(){
+                console.log('Data Successfully Loaded....Listening for Data Entry')
+            })
+    } 
+    else {
+        
+        console.log ('Creating Data File')
+        
+        //format header row in csv file
+        var header = parameters.join(",") + ",timeStamp"
+        
+        //add header to data file
+        fs.appendFile(fileLoc, header, function (err) {
+            if (err) throw err;
+                console.log('Header Created....Listening For Data Entry');
+        });
+    }
+})
 
 //concat string to add to parameters to the routing routine
 var serverCall = ":" + parameters.join("/:")
@@ -47,10 +75,19 @@ app.get('/write/' + serverCall, function (req, res) {
     data.push(req.params);
 
     //push data to file location
-    // fs.appendFile(fileLoc, req.params, function (err) {
-    //     if (err) throw err;
-    //     console.log('new data written to data file.');
-    //   });
+
+    //format csv entry
+    console.log('req.params: ' + req.params["parameterOne"])
+    var csvEntry = ""
+    var csvEntryFormat = Object.keys(req.params).forEach((e,i) => {
+        csvEntry = csvEntry + req.params[e] +  ','
+    })
+    csvEntry = "\r\n" + csvEntry.substr(0,csvEntry.length - 1)
+
+    fs.appendFile(fileLoc, csvEntry, function (err) {
+        if (err) throw err;
+        console.log('new data written to data file.');
+      });
  })
 
  //read data from data file routing
@@ -67,7 +104,7 @@ var server = app.listen(3000, function () {
    if(host = "::"){
        host = "localhost:"
    }
-   
+
    console.log("data server is listening at ", host + port)
    console.log("Parameters data server is listening for: ")
    parameters.forEach((e) => console.log("-> " + e))
