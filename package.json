@@ -1,0 +1,22 @@
+{
+  "name": "iot-dataserver",
+  "version": "1.0.0",
+  "description": "Server template to capture data points from one or multiple clients for analysis using url parameters",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JoshKoiro/IOT-DataServer.git"
+  },
+  "author": "JoshKoiro",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/JoshKoiro/IOT-DataServer/issues"
+  },
+  "homepage": "https://github.com/JoshKoiro/IOT-DataServer#readme",
+  "dependencies": {
+    "express": "^4.16.4"
+  }
+}
