@@ -1,0 +1,16 @@
+html
+    header
+     link(rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous")
+    body
+        include header.pug
+        table(class="table table-hover mt-4 col-10 offset-1")
+            thead(class="thead")
+                tr
+                for header in headers
+                    th(class="text-center" scope="col")= header
+            tbody
+            for dataPoint in data
+                tr
+                for header in headers
+                    td(class="text-center")= dataPoint[header]
+    include scriptCode.pug

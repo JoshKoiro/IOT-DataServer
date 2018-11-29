@@ -18,6 +18,8 @@
   "homepage": "https://github.com/JoshKoiro/IOT-DataServer#readme",
   "dependencies": {
     "express": "^4.16.4",
-    "fast-csv": "^2.4.1"
+    "fast-csv": "^2.4.1",
+    "pug": "^2.0.3",
+    "socket.io": "^2.2.0"
   }
 }
