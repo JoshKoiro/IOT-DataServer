@@ -14,3 +14,15 @@ html
                 for header in headers
                     td(class="text-center")= dataPoint[header]
     include scriptCode.pug
+    script.
+        $(function(){
+        var socket = io();
+        socket.on('data entry', (data) => {
+            var markup = ""
+            Object.keys(data).forEach((e) => {
+            markup = markup + "<td>" + data[e] + "</td>"
+            })
+            markup = "<tr>" + markup + "</tr>"
+            $("table tbody").append(markup)
+            })
+        });

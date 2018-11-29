@@ -48,7 +48,7 @@ fs.exists(fileLoc,(exist) => {
         console.log("Loading Data File")
             
         //Using fast-csv to parse the existing csv file
-        var parser = csv.fromPath(fileLoc,{headers:true})
+        var parser = csv.fromPath(fileLoc,{headers:true, discardUnmappedColumns:false,objectMode:true})
             .on("data",function(csvData){
                 data.push(csvData)
             })
@@ -63,7 +63,8 @@ fs.exists(fileLoc,(exist) => {
         console.log ('Creating ' + fileLoc + ' as data file')
         
         //format header row in csv file
-        var header = parameters.join(",") + ",timeStamp"
+        // var header = parameters.join(",") + ",timeStamp"
+        var header = parameters.join(',')
         
         //add header to data file
         fs.appendFile(fileLoc, header, function (err) {
@@ -78,9 +79,9 @@ fs.exists(fileLoc,(exist) => {
 //take the parameters in config array and join them together as string for express server routing with parameters
 var serverCall = ":" + parameters.join("/:")
 
-//set headers variable
-let headers = parameters
-    headers.push('timeStamp')
+//set variables to pass into views
+let viewHeaders = parameters
+    viewHeaders.push('timeStamp')
 
 //set date variable
 var currentDate = new Date()
@@ -91,6 +92,8 @@ app.set("view engine", "pug");
 //Setup Express to look at views folder for pug files
 app.set("views",path.join(__dirname, "views"));
 
+app.use("/",express.static(__dirname));
+
 //Load Dashboard on Client
 app.get('/', function (req, res) {
     res.render("dashboard",{})
@@ -99,7 +102,7 @@ app.get('/', function (req, res) {
 //Load Tabular Data on Client
 app.get('/table', function (req, res) {
     res.render("table",{
-        headers:parameters,
+        headers:viewHeaders,
         data:data
     })
 })
@@ -109,11 +112,11 @@ app.get('/write/' + serverCall, function (req, res) {
     //set currentDate variable to current time
     currentDate = new Date()
     //set timestamp parameter
-    req.params.timeStamp = (currentDate.getMonth() + 1) + "/" + currentDate.getDate() + "/" + currentDate.getFullYear() + " " + currentDate.getHours() + ":" + currentDate.getMinutes() + ":" + currentDate.getSeconds() 
+    req.params.timeStamp = (currentDate.getMonth() + 1) + "/" + currentDate.getDate() + "/" + currentDate.getFullYear() + " " + currentDate.getHours() + ":" + currentDate.getMinutes() + ":" + currentDate.getSeconds()
     
     //send confirmation to user
-    res.header("Content-Type","text/plain")
-    res.send(req.params);
+    res.render("writeFile",{})
+    // res.send(req.params);
 
     //push data to memory location
     data.push(req.params);
@@ -125,7 +128,7 @@ app.get('/write/' + serverCall, function (req, res) {
     var csvEntryFormat = Object.keys(req.params).forEach((e,i) => {
         csvEntry = csvEntry + req.params[e] +  ','
     })
-    csvEntry = "\r\n" + csvEntry.substr(0,csvEntry.length - 1)
+    csvEntry = ",\r\n" + csvEntry.substr(0,csvEntry.length - 1)
 
     fs.appendFile(fileLoc, csvEntry, function (err) {
         if (err) throw err;
@@ -142,13 +145,12 @@ app.get('/read', function (req, res) {
 
  //Socket io listeners
 
- io.on('connection',() => {
-     console.log('client connected')
+ io.on('connection',(socket) => {   
+    console.log('client connected')
+    socket.on('data entry',(data) => {
+        io.emit('update data',data) 
  })
-
- io.on('disconnect',() => {
-     console.log('client disconnected')
- })
+})
 
 
 //run server 
