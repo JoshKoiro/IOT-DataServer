@@ -168,6 +168,6 @@ var server = http.listen(3000, function () {
 
    console.log("data server is listening at: \r\n\r\n", ipAddress +":"+ port)
    console.log("\r\n\r\nParameters data server is listening for: ")
-   parameters.forEach((e) => console.log("-> " + e))
+   parameters.slice(0,parameters.length -1).forEach((e) => console.log("-> " + e))
    console.log('\r\n\r\n')
 })
