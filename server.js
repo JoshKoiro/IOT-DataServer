@@ -90,9 +90,6 @@ console.log(serverCall)
 let viewHeaders = parameters
     viewHeaders.push('timeStamp')
 
-//set date variable
-var currentDate = new Date()
-
 //Setup view engine for html template files
 app.set("view engine", "pug");
 
@@ -124,10 +121,9 @@ app.get('/table', function (req, res) {
 //write data to data file routing
 app.get('/write/' + serverCall, function (req, res) {
     res.header("Content-Type","text/plain")
-    //set currentDate variable to current time
-    currentDate = new Date()
+
     //set timestamp parameter
-    req.params.timeStamp = (currentDate.getMonth() + 1) + "/" + currentDate.getDate() + "/" + currentDate.getFullYear() + " " + currentDate.getHours() + ":" + currentDate.getMinutes() + ":" + currentDate.getSeconds()
+    req.params.timeStamp = moment().format("MMMM Do YYYY, h:mm:ss a")
     
     //send confirmation to user
     res.send('data point recieved')
