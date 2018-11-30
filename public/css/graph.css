@@ -1,0 +1,18 @@
+.ct-labels {
+    color: #aaaaaa;
+}
+
+.ct-series-a .ct-line {
+    stroke: rgb(100,0,200);
+    stroke-width:3px;
+
+}
+
+.ct-series-a .ct-point {
+    /* Colour of your points */
+    stroke: red;
+    /* Size of your points */
+    stroke-width: 20px;
+    /* Make your points appear as squares */
+    stroke-linecap: square;
+  }

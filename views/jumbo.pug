@@ -1,7 +1,19 @@
-div(class="container")
-    div(class="row")
-        div(class="col-xl")
-            div(class=jumbotron)
-                h1(class="display-4") Server is Running!
-                p(class="lead") you may access data by using buttons or by navigating to directory urls
-                hr(class="my-4")
+div(class="row mt-4")
+    div(class="col-3 offset-sm-1")
+        div(class="card text-white bg-success mb-3")
+            div(class="card-header") Status
+            div(class="card-body")
+                h5(class="card-title") Server is Running
+                p(class="lead") Check the console for further information.
+    div(class="col-3")
+        div(class="card text-white bg-info mb-3")
+            div(class="card-header") Users
+            div(class="card-body")
+                h5(class="card-title") 1
+                p(class="lead") User(s) Online
+    div(class="col-3")
+        div(class="card text-white bg-info mb-3")
+            div(class="card-header") Records
+            div(class="card-body")
+                h5(class="card-title" id="dataLength")= dataLength 
+                p(class="lead") Data Points Collected

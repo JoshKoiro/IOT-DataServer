@@ -81,6 +81,7 @@ fs.exists(fileLoc,(exist) => {
 
 //take the parameters in config array and join them together as string for express server routing with parameters
 var serverCall = ":" + parameters.join("/:")
+console.log(serverCall)
 
 //set variables to pass into views
 let viewHeaders = parameters
@@ -99,7 +100,13 @@ app.use(express.static(__dirname + '/public'));
 
 //Load Dashboard on Client
 app.get('/', function (req, res) {
-    res.render("dashboard",{})
+    res.render("dashboard",{
+        dataPoints: data,
+        dataLength: data.length,
+        firstDataTime: data[0].timeStamp,
+        lastDataTime: data[data.length - 1].timeStamp,
+        culmulativeData: 0
+    })
 })
 
 //Load Tabular Data on Client
@@ -112,13 +119,14 @@ app.get('/table', function (req, res) {
 
 //write data to data file routing
 app.get('/write/' + serverCall, function (req, res) {
+    res.header("Content-Type","text/plain")
     //set currentDate variable to current time
     currentDate = new Date()
     //set timestamp parameter
     req.params.timeStamp = (currentDate.getMonth() + 1) + "/" + currentDate.getDate() + "/" + currentDate.getFullYear() + " " + currentDate.getHours() + ":" + currentDate.getMinutes() + ":" + currentDate.getSeconds()
     
     //send confirmation to user
-    res.render("writeFile",{})
+    res.send('data point recieved')
     // res.send(req.params);
 
     //push data to memory location
@@ -132,6 +140,10 @@ app.get('/write/' + serverCall, function (req, res) {
         csvEntry = csvEntry + req.params[e] +  ','
     })
     dataPacket = req.params
+    io.sockets.emit('update data',{
+        dataPoint:dataPacket,
+        dataLength: data.length
+    })
     csvEntry = ",\r\n" + csvEntry.substr(0,csvEntry.length - 1)
 
     fs.appendFile(fileLoc, csvEntry, function (err) {
@@ -151,9 +163,9 @@ app.get('/read', function (req, res) {
 
  io.on('connection',(socket) => {   
     console.log('client connected')
-    socket.on('data entry',() => {
-        io.sockets.emit('update data',{newData:dataPacket}) 
- })
+//     socket.on('data entry',() => {
+//         io.sockets.emit('update data',{newData:dataPacket}) 
+//  })
 })
 
 
