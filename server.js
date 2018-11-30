@@ -39,6 +39,9 @@ var io = require('socket.io')(http);
 //data to be stored in memory
 var data = []
 
+//variable to store new datapoint to push to clients
+var dataPacket = ""
+
 //Check if data file exists. If so, import. If not, create one.
 fs.exists(fileLoc,(exist) => {
     if(exist){
@@ -92,7 +95,7 @@ app.set("view engine", "pug");
 //Setup Express to look at views folder for pug files
 app.set("views",path.join(__dirname, "views"));
 
-app.use("/",express.static(__dirname));
+app.use(express.static(__dirname + '/public'));
 
 //Load Dashboard on Client
 app.get('/', function (req, res) {
@@ -128,6 +131,7 @@ app.get('/write/' + serverCall, function (req, res) {
     var csvEntryFormat = Object.keys(req.params).forEach((e,i) => {
         csvEntry = csvEntry + req.params[e] +  ','
     })
+    dataPacket = req.params
     csvEntry = ",\r\n" + csvEntry.substr(0,csvEntry.length - 1)
 
     fs.appendFile(fileLoc, csvEntry, function (err) {
@@ -147,8 +151,8 @@ app.get('/read', function (req, res) {
 
  io.on('connection',(socket) => {   
     console.log('client connected')
-    socket.on('data entry',(data) => {
-        io.emit('update data',data) 
+    socket.on('data entry',() => {
+        io.sockets.emit('update data',{newData:dataPacket}) 
  })
 })
 

@@ -6,23 +6,12 @@ html
         table(class="table table-hover mt-4 col-10 offset-1")
             thead(class="thead")
                 tr
-                for header in headers
-                    th(class="text-center" scope="col")= header
-            tbody
-            for dataPoint in data
-                tr
-                for header in headers
-                    td(class="text-center")= dataPoint[header]
+                    each header in headers
+                        th(class="text-center" scope="col")= header
+            tbody(id="insertPoint")
+                each dataPoint in data
+                    tr
+                        each header in headers
+                            td(class="text-center")= dataPoint[header]
     include scriptCode.pug
-    script.
-        $(function(){
-        var socket = io();
-        socket.on('data entry', (data) => {
-            var markup = ""
-            Object.keys(data).forEach((e) => {
-            markup = markup + "<td>" + data[e] + "</td>"
-            })
-            markup = "<tr>" + markup + "</tr>"
-            $("table tbody").append(markup)
-            })
-        });
+    script(src="/scripts/table.js")
