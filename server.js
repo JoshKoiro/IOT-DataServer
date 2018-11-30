@@ -32,6 +32,9 @@ var http = require('http').Server(app)
 //import socket.io components
 var io = require('socket.io')(http);
 
+//import moment.js
+var moment = require('moment');
+
 //--------------------------------------------------------------------------
 
 //PREPARE .CSV FILE DATABASE -----------------------------------------------
@@ -100,11 +103,12 @@ app.use(express.static(__dirname + '/public'));
 
 //Load Dashboard on Client
 app.get('/', function (req, res) {
+    console.log(data.length)
     res.render("dashboard",{
         dataPoints: data,
         dataLength: data.length,
-        firstDataTime: data[0].timeStamp,
-        lastDataTime: data[data.length - 1].timeStamp,
+        firstDataTime: data.length === 0 ? "No Data Collected" : data[0].timeStamp,
+        lastDataTime: data.length === 0 ? "No Data Collected" : data[data.length - 1].timeStamp,
         culmulativeData: 0
     })
 })
