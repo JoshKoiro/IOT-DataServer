@@ -104,8 +104,8 @@ app.get('/', function (req, res) {
     res.render("dashboard",{
         dataPoints: data,
         dataLength: data.length,
-        firstDataTime: data.length === 0 ? "No Data Collected" : data[0].timeStamp,
-        lastDataTime: data.length === 0 ? "No Data Collected" : data[data.length - 1].timeStamp,
+        firstDataTime: data.length === 0 ? "No Data Collected" : moment(data[0].timeStamp).startOf("minute").fromNow(),
+        lastDataTime: data.length === 0 ? "No Data Collected" : moment(data[data.length - 1].timeStamp).startOf("minute").fromNow(),
         culmulativeData: 0
     })
 })
@@ -123,11 +123,14 @@ app.get('/write/' + serverCall, function (req, res) {
     res.header("Content-Type","text/plain")
 
     //set timestamp parameter
-    req.params.timeStamp = moment()
+    var currentDate = new Date()
+    var ISODate = currentDate.getFullYear() + "" + ("0" + (currentDate.getMonth() + 1)).slice(-2) + "" + ("0" + currentDate.getDate()).slice(-2) + "T" + ("0" + currentDate.getHours()).slice(-2) + "" + ("0" + currentDate.getMinutes()).slice(-2) + "" + ("0" + currentDate.getSeconds()).slice(-2)
+    console.log(ISODate)
+    req.params.timeStamp = ISODate
+    console.log("req.params: " + req.params.timeStamp)
     
     //send confirmation to user
     res.send('data point recieved')
-    // res.send(req.params);
 
     //push data to memory location
     data.push(req.params);
