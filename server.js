@@ -123,7 +123,7 @@ app.get('/write/' + serverCall, function (req, res) {
     res.header("Content-Type","text/plain")
 
     //set timestamp parameter
-    req.params.timeStamp = moment().format("MMMM Do YYYY, h:mm:ss a")
+    req.params.timeStamp = moment()
     
     //send confirmation to user
     res.send('data point recieved')
